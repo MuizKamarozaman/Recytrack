@@ -25,6 +25,36 @@ class _RequestPageState extends State<RequestPage> {
     });
   }
 
+  // Function to show confirmation dialog
+  Future<void> showConfirmationDialog(String id) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Update'),
+          content: Text('Are you sure you want to update the approval status?'),
+          actions: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Update'),
+              onPressed: () {
+                dbPickup db = dbPickup();
+                db.updateStatus(id);
+                Navigator.of(context).pop();
+                fetchData(); // Fetch data again after update
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +100,7 @@ class _RequestPageState extends State<RequestPage> {
                       decoration: BoxDecoration(
                         border: Border.all(color: Theme.of(context).dividerColor),
                         borderRadius: BorderRadius.circular(8),
-                      ),     
+                      ),
                     ),
                     Column(
                       children: dataFromDatabase.map((data) {
@@ -80,19 +110,48 @@ class _RequestPageState extends State<RequestPage> {
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(data['date']),
-                                Text(data['time']),
+                                  Text(data['date']),
+                                  Text(data['time']),
                               ],
                             ),
-                            trailing: 
-                              IconButton(
-                                icon: Icon(Icons.check),
-                                onPressed: () {
-                                  print(data['id']);
-                                  dbPickup db = dbPickup();
-                                  db.updateStatus(data['id']);
-                                },
-                              ),
+                            trailing: IconButton(
+                              icon: Icon(Icons.check),
+                              onPressed: () {
+                                showConfirmationDialog(data['id']);
+                              },
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    SizedBox(height: 32),
+                    Text(
+                      'Approved Request',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 8),
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Theme.of(context).dividerColor),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    Column(
+                      children: dataFromDatabase.map((data) {
+                        int telno = data['telno'];
+                        return Card(
+                          child: ListTile(
+                            title: Text(data['location'], style: TextStyle(fontWeight: FontWeight.bold)),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                  Text(data['date']),
+                                  Text(data['time']),
+                              ],
+                            ),
+                            trailing: Text('0$telno'),
                           ),
                         );
                       }).toList(),

@@ -2,21 +2,24 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class dbRecycle{
   // Collection reference
-final CollectionReference recycleCollection = FirebaseFirestore.instance.collection('recycle');
+  final CollectionReference recycleCollection = FirebaseFirestore.instance.collection('recycle');
 
   Future<void> addRecycleData(
-      String username,
-      double weight,
-      double plastic,
-      double glass,
-      double paper,
-      double rubber,
-      double metal,
-      double paymentTotal,
-      double point) async {
-
+    String username,
+    double weight,
+    double plastic,
+    double glass,
+    double paper,
+    double rubber,
+    double metal,
+    double paymentTotal,
+    double point,
+  ) async {
     try {
-      await recycleCollection.doc(username).set({
+      final DocumentReference documentRef = recycleCollection.doc(username);
+      final CollectionReference newDataCollection = documentRef.collection('data');
+
+      await newDataCollection.add({
         'username': username,
         'weight': weight,
         'plastic': plastic,
@@ -29,10 +32,9 @@ final CollectionReference recycleCollection = FirebaseFirestore.instance.collect
       });
     } catch (error) {
       // Handle the error
-      print('Error updating recycle data: $error');
+      print('Error adding recycle data: $error');
     }
   }
-
 
   Future<List<Map<String, dynamic>>> getCumulativeWeights() async {
     List<Map<String, dynamic>> cumulativeWeights = [];

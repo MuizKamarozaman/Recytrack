@@ -25,7 +25,7 @@ class _WMSPRecyclePageState extends State<WMSPRecyclePage> {
   double totalWeight = 0.0;
 
   //create an instance of the database service
-  dbRecycle databaseService = dbRecycle();
+  dbRecycle db = dbRecycle();
 
   //calculate the total weight
   void calculateTotalWeight() {
@@ -64,6 +64,37 @@ class _WMSPRecyclePageState extends State<WMSPRecyclePage> {
   double calculateTotalPoint(weight) {
     double totalPoint = weight * 2;
     return totalPoint;
+  }
+
+  // Function to show confirmation dialog
+  Future<void> showConfirmationDialog(String username, double weight, double plastic, double glass, double paper, double rubber, double metal, double paymentTotal, double point) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirm Submition'),
+          content: Text('Are you sure you want to submit the recycle items?'),
+          actions: [
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Update'),
+              onPressed: () {
+                db.addRecycleData(username, weight, plastic, glass, paper, rubber, metal, paymentTotal, point);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePageStaff ()),
+                  );
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   //body
@@ -251,7 +282,7 @@ class _WMSPRecyclePageState extends State<WMSPRecyclePage> {
                         )),
                     SizedBox(width: 16),
                     ElevatedButton(
-                      onPressed: () async {
+                      onPressed: () {
                         // Retrieve the user input values
                         String username = usernameController.text;
                         double weight =
@@ -268,9 +299,7 @@ class _WMSPRecyclePageState extends State<WMSPRecyclePage> {
                             double.tryParse(rubberController.text) ?? 0.0;
                         double metal =
                             double.tryParse(metalController.text) ?? 0.0;
-
-                        //Call the updateRecycleData method
-                        databaseService.addRecycleData(username, weight, plastic, glass, paper, rubber, metal, paymentTotal, point);
+                        showConfirmationDialog(username, weight, plastic, glass, paper, rubber, metal, paymentTotal, point);
                       },
                       style: ElevatedButton.styleFrom(
                         primary: Color.fromRGBO(101, 145, 87, 1),

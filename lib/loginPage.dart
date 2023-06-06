@@ -141,7 +141,7 @@ class _LoginDemoState extends State<LoginDemo> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          "Don't havek an account?",
+                          "Don't have an account?",
                           style: TextStyle(fontSize: 14),
                         ),
                         GestureDetector(

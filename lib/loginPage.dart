@@ -3,6 +3,7 @@ import 'package:recytrack/SignupPage.dart';
 import 'package:recytrack/HomePage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+
 //test
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -115,7 +116,9 @@ class _LoginDemoState extends State<LoginDemo> {
                             Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => RedirectPage(userId: '${username.text}',)),
+                                  builder: (context) => RedirectPage(
+                                        userId: '${username.text}',
+                                      )),
                             );
                             print(
                               'Add ${username.text}  ${password.text} into the debug console',

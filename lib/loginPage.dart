@@ -125,7 +125,7 @@ class _LoginDemoState extends State<LoginDemo> {
                             );
                           },
                           child: Text(
-                            'LOGINnn',
+                            'LOGIN',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 14,

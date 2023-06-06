@@ -6,17 +6,21 @@ class dbRecycle {
       FirebaseFirestore.instance.collection('recycle');
 
   Future<void> addRecycleData(
-      String username,
-      double weight,
-      double plastic,
-      double glass,
-      double paper,
-      double rubber,
-      double metal,
-      double paymentTotal,
-      double point) async {
+    String username,
+    double weight,
+    double plastic,
+    double glass,
+    double paper,
+    double rubber,
+    double metal,
+    double paymentTotal,
+    double point,
+  ) async {
     try {
-      await recycleCollection.doc(username).set({
+      final DocumentReference documentRef = recycleCollection.doc(username);
+      final CollectionReference newDataCollection = documentRef.collection('data');
+
+      await newDataCollection.add({
         'username': username,
         'weight': weight,
         'plastic': plastic,
@@ -29,7 +33,7 @@ class dbRecycle {
       });
     } catch (error) {
       // Handle the error
-      print('Error updating recycle data: $error');
+      print('Error adding recycle data: $error');
     }
   }
 

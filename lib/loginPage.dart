@@ -125,7 +125,7 @@ class _LoginDemoState extends State<LoginDemo> {
                             );
                           },
                           child: Text(
-                            'LOGIN',
+                            'LOGINnn',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 14,
@@ -141,7 +141,7 @@ class _LoginDemoState extends State<LoginDemo> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          "Don't have an account?",
+                          "Don't havek an account?",
                           style: TextStyle(fontSize: 14),
                         ),
                         GestureDetector(

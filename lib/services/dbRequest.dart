@@ -24,17 +24,14 @@ class dbPickup {
         String time = data['time'] ?? '';
         bool status = data['status'];
         
-        if (status == false) {
-          pickupData.add({
-
-            'id': id,
-            'telno' : telno,
-            'location': location,
-            'date': date,
-            'time': time,
-            'status': status,
-          });
-        }
+        pickupData.add({
+          'id': id,
+          'telno' : telno,
+          'location': location,
+          'date': date,
+          'time': time,
+          'status': status,
+        });
       }
     } catch (error) {
       print('Error getting pickup data: $error');

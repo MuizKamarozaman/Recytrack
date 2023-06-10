@@ -62,7 +62,7 @@ class _LoginDemoState extends State<LoginDemo> {
                     Padding(
                       padding: const EdgeInsets.only(left: 0.0),
                       child: Text(
-                        "Login",
+                        "Logon",
                         style: TextStyle(
                           fontSize: 30,
                           fontFamily: 'Montserrat',

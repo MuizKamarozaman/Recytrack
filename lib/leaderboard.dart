@@ -95,7 +95,7 @@ class LeaderboardPageState extends State<LeaderboardPage> {
                 ),
                 SizedBox(height: 10),
                 Text(
-                  "Siu Keng",
+                  "UPDATE WOI",
                   style: TextStyle(fontSize: 20, color: Colors.white),
                 ),
                 SizedBox(height: 20),

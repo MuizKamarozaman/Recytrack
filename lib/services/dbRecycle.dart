@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class dbRecycle {
+class dbRecycle{
   // Collection reference
-  final CollectionReference recycleCollection =
-      FirebaseFirestore.instance.collection('recycle');
+  final CollectionReference recycleCollection = FirebaseFirestore.instance.collection('recycle');
 
   Future<void> addRecycleData(
     String username,
@@ -18,6 +17,11 @@ class dbRecycle {
   ) async {
     try {
       final DocumentReference documentRef = recycleCollection.doc(username);
+
+      await documentRef.set({
+        'username': username,
+      });
+
       final CollectionReference newDataCollection = documentRef.collection('data');
 
       await newDataCollection.add({
@@ -41,12 +45,12 @@ class dbRecycle {
     List<Map<String, dynamic>> cumulativeWeights = [];
 
     try {
+      final CollectionReference recycleCollection = FirebaseFirestore.instance.collection('recycle');
       QuerySnapshot snapshot = await recycleCollection.get();
-      List<QueryDocumentSnapshot<Map<String, dynamic>>> documents = snapshot
-          .docs
-          .map((doc) => doc as QueryDocumentSnapshot<Map<String, dynamic>>)
-          .toList();
-      print(documents);
+
+      List<QueryDocumentSnapshot<Map<String, dynamic>>> documents = snapshot.docs.map((doc) => doc as QueryDocumentSnapshot<Map<String, dynamic>>).toList();
+      print('Number of documents: ${documents.length}');
+
       // Initialize the cumulative totals for each type
       double cumulativePlastic = 0;
       double cumulativeGlass = 0;
@@ -56,45 +60,47 @@ class dbRecycle {
 
       // Calculate the cumulative weights
       for (QueryDocumentSnapshot<Map<String, dynamic>> doc in documents) {
-        Map<String, dynamic>? data = doc.data();
+        CollectionReference newDataCollection = doc.reference.collection('data');
+        QuerySnapshot dataSnapshot = await newDataCollection.get();
 
-        double plasticWeight = data['plastic'] ?? 0;
-        double glassWeight = data['glass'] ?? 0;
-        double paperWeight = data['paper'] ?? 0;
-        double rubberWeight = data['rubber'] ?? 0;
-        double metalWeight = data['metal'] ?? 0;
+        // Cast the dataSnapshot.docs list to the correct type
+        List<QueryDocumentSnapshot<Map<String, dynamic>>> dataDocs = dataSnapshot.docs.cast<QueryDocumentSnapshot<Map<String, dynamic>>>();
+        print('Number of data documents: ${dataDocs.length}');
 
-        cumulativePlastic += plasticWeight;
-        cumulativeGlass += glassWeight;
-        cumulativePaper += paperWeight;
-        cumulativeRubber += rubberWeight;
-        cumulativeMetal += metalWeight;
+        for (QueryDocumentSnapshot<Map<String, dynamic>> dataDoc in dataDocs) {
+          Map<String, dynamic>? data = dataDoc.data();
+
+          double plasticWeight = data['plastic'] ?? 0;
+          double glassWeight = data['glass'] ?? 0;
+          double paperWeight = data['paper'] ?? 0;
+          double rubberWeight = data['rubber'] ?? 0;
+          double metalWeight = data['metal'] ?? 0;
+
+          cumulativePlastic += plasticWeight;
+          cumulativeGlass += glassWeight;
+          cumulativePaper += paperWeight;
+          cumulativeRubber += rubberWeight;
+          cumulativeMetal += metalWeight;
+        }
       }
 
+      //troubleshoot
+      print('Cumulative Plastic: $cumulativePlastic');
+      print('Cumulative Glass: $cumulativeGlass');
+      print('Cumulative Paper: $cumulativePaper');
+      print('Cumulative Rubber: $cumulativeRubber');
+      print('Cumulative Metal: $cumulativeMetal');
+
       // Add the cumulative totals to the list
-      cumulativeWeights
-          .add({'type': 'Plastic', 'totalWeight': cumulativePlastic});
+      cumulativeWeights.add({'type': 'Plastic', 'totalWeight': cumulativePlastic});
       cumulativeWeights.add({'type': 'Glass', 'totalWeight': cumulativeGlass});
       cumulativeWeights.add({'type': 'Paper', 'totalWeight': cumulativePaper});
-      cumulativeWeights
-          .add({'type': 'Rubber', 'totalWeight': cumulativeRubber});
+      cumulativeWeights.add({'type': 'Rubber', 'totalWeight': cumulativeRubber});
       cumulativeWeights.add({'type': 'Metal', 'totalWeight': cumulativeMetal});
     } catch (error) {
       print('Error retrieving cumulative weights: $error');
     }
 
     return cumulativeWeights;
-  }
-
-  Future<List<DocumentSnapshot>> getData() async {
-    // Reference your Firestore collection
-    CollectionReference collectionReference =
-        FirebaseFirestore.instance.collection('recycle');
-
-    // Query the collection and retrieve the documents
-    QuerySnapshot querySnapshot = await collectionReference.get();
-
-    // Return the document snapshots
-    return querySnapshot.docs;
   }
 }
